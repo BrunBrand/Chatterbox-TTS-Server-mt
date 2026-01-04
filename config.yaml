@@ -34,22 +34,22 @@ audio_output:
   max_reference_duration_sec: 30
   save_to_disk: false
 ui_state:
-  last_text: "O que aconteceu na Venezuela n\xE3o foi um ataque, foi um resgate. Por\
-    \ anos, o mundo assistiu passivamente enquanto uma quadrilha tomava conta do pa\xED\
-    s. A \xF4nu e os \"direitos humanos\" fingiram que n\xE3o viam nada, enquanto\
-    \ o povo era torturado e revirava o lixo para comer"
+  last_text: "E a\xED a m\xEDdia esquerdista vai falar de \"imperialismo\" e defender\
+    \ o ditador. S\xE3o os mesmos que ficaram calados diante da fome e das mortes\
+    \ provocadas pelo chavismo. Para essa turma, a democracia s\xF3 serve quando \xE9\
+    \ para os amigos deles. *Falar com entusiasmo*"
   last_voice_mode: clone
   last_predefined_voice: Ian.wav
-  last_reference_file: t7.mp3
+  last_reference_file: mark2.mp3
   last_seed: 0
-  last_chunk_size: 50
+  last_chunk_size: 320
   last_split_text_enabled: true
-  last_temperature: 1.5
-  last_exaggeration: 2
-  last_cfg_weight: 0.4
-  last_repetition_penalty: 2.45
-  last_top_p: 0.8
-  last_min_p: 0.17
+  last_temperature: 1.25
+  last_exaggeration: 1.81
+  last_cfg_weight: 0.74
+  last_repetition_penalty: 1.45
+  last_top_p: 0.43
+  last_min_p: 0.32
   last_speed_factor: 1
   hide_chunk_warning: false
   hide_generation_warning: true
