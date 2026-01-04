@@ -26,6 +26,24 @@ class GenerationParams(BaseModel):
         le=1.0,  # Based on Chatterbox Gradio app
         description="Classifier-Free Guidance weight. Influences adherence to prompt/style and pacing. (Range: 0.2-1.0)",
     )
+    repetition_penalty: Optional[float] = Field(
+        None,
+        ge=0.0,
+        le=5.0,
+        description="Multilingual only: discourages repeated tokens. (Range: 0.0-5.0)",
+    )
+    top_p: Optional[float] = Field(
+        None,
+        ge=0.0,
+        le=1.0,
+        description="Multilingual only: nucleus sampling probability mass. (Range: 0.0-1.0)",
+    )
+    min_p: Optional[float] = Field(
+        None,
+        ge=0.0,
+        le=1.0,
+        description="Multilingual only: minimum probability threshold for tokens. (Range: 0.0-1.0)",
+    )
     seed: Optional[int] = Field(
         None,
         ge=0,  # Seed should be non-negative, 0 often implies random.
@@ -85,6 +103,15 @@ class CustomTTSRequest(BaseModel):
     )
     cfg_weight: Optional[float] = Field(
         None, description="Overrides default CFG weight if provided."
+    )
+    repetition_penalty: Optional[float] = Field(
+        None, description="Overrides default repetition penalty if provided (multilingual only)."
+    )
+    top_p: Optional[float] = Field(
+        None, description="Overrides default top-p value if provided (multilingual only)."
+    )
+    min_p: Optional[float] = Field(
+        None, description="Overrides default min-p value if provided (multilingual only)."
     )
     seed: Optional[int] = Field(None, description="Overrides default seed if provided.")
     speed_factor: Optional[float] = Field(

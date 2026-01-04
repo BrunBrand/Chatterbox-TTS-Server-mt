@@ -73,6 +73,12 @@ document.addEventListener('DOMContentLoaded', async function () {
     const exaggerationValueDisplay = document.getElementById('exaggeration-value');
     const cfgWeightSlider = document.getElementById('cfg-weight');
     const cfgWeightValueDisplay = document.getElementById('cfg-weight-value');
+    const repetitionPenaltySlider = document.getElementById('repetition-penalty');
+    const repetitionPenaltyValueDisplay = document.getElementById('repetition-penalty-value');
+    const topPSlider = document.getElementById('top-p');
+    const topPValueDisplay = document.getElementById('top-p-value');
+    const minPSlider = document.getElementById('min-p');
+    const minPValueDisplay = document.getElementById('min-p-value');
     const speedFactorSlider = document.getElementById('speed-factor');
     const speedFactorValueDisplay = document.getElementById('speed-factor-value');
     const speedFactorWarningSpan = document.getElementById('speed-factor-warning');
@@ -275,6 +281,13 @@ document.addEventListener('DOMContentLoaded', async function () {
             last_seed: seedInput ? parseInt(seedInput.value, 10) || 0 : 0,
             last_chunk_size: chunkSizeSlider ? parseInt(chunkSizeSlider.value, 10) : 120,
             last_split_text_enabled: splitTextToggle ? splitTextToggle.checked : true,
+            last_temperature: temperatureSlider ? parseFloat(temperatureSlider.value) : 0.8,
+            last_exaggeration: exaggerationSlider ? parseFloat(exaggerationSlider.value) : 0.5,
+            last_cfg_weight: cfgWeightSlider ? parseFloat(cfgWeightSlider.value) : 0.5,
+            last_repetition_penalty: repetitionPenaltySlider ? parseFloat(repetitionPenaltySlider.value) : 2.0,
+            last_top_p: topPSlider ? parseFloat(topPSlider.value) : 1.0,
+            last_min_p: minPSlider ? parseFloat(minPSlider.value) : 0.05,
+            last_speed_factor: speedFactorSlider ? parseFloat(speedFactorSlider.value) : 1.0,
             hide_chunk_warning: hideChunkWarning,
             hide_generation_warning: hideGenerationWarning,
             theme: localStorage.getItem('uiTheme') || 'dark',
@@ -644,14 +657,33 @@ document.addEventListener('DOMContentLoaded', async function () {
         if (chunkSizeValue) chunkSizeValue.textContent = chunkSizeSlider ? chunkSizeSlider.value : '120';
         toggleChunkControlsVisibility();
 
-        if (temperatureSlider) temperatureSlider.value = genDefaults.temperature !== undefined ? genDefaults.temperature : 0.8;
-        if (temperatureValueDisplay) temperatureValueDisplay.textContent = temperatureSlider.value;
-        if (exaggerationSlider) exaggerationSlider.value = genDefaults.exaggeration !== undefined ? genDefaults.exaggeration : 0.5;
-        if (exaggerationValueDisplay) exaggerationValueDisplay.textContent = exaggerationSlider.value;
-        if (cfgWeightSlider) cfgWeightSlider.value = genDefaults.cfg_weight !== undefined ? genDefaults.cfg_weight : 0.5;
-        if (cfgWeightValueDisplay) cfgWeightValueDisplay.textContent = cfgWeightSlider.value;
-        if (speedFactorSlider) speedFactorSlider.value = genDefaults.speed_factor !== undefined ? genDefaults.speed_factor : 1.0;
-        if (speedFactorValueDisplay) speedFactorValueDisplay.textContent = speedFactorSlider.value;
+        const temperatureToUse = currentUiState.last_temperature !== undefined ? currentUiState.last_temperature : (genDefaults.temperature !== undefined ? genDefaults.temperature : 0.8);
+        if (temperatureSlider) temperatureSlider.value = temperatureToUse;
+        if (temperatureValueDisplay) temperatureValueDisplay.textContent = temperatureSlider ? temperatureSlider.value : temperatureToUse;
+
+        const exaggerationToUse = currentUiState.last_exaggeration !== undefined ? currentUiState.last_exaggeration : (genDefaults.exaggeration !== undefined ? genDefaults.exaggeration : 0.5);
+        if (exaggerationSlider) exaggerationSlider.value = exaggerationToUse;
+        if (exaggerationValueDisplay) exaggerationValueDisplay.textContent = exaggerationSlider ? exaggerationSlider.value : exaggerationToUse;
+
+        const cfgWeightToUse = currentUiState.last_cfg_weight !== undefined ? currentUiState.last_cfg_weight : (genDefaults.cfg_weight !== undefined ? genDefaults.cfg_weight : 0.5);
+        if (cfgWeightSlider) cfgWeightSlider.value = cfgWeightToUse;
+        if (cfgWeightValueDisplay) cfgWeightValueDisplay.textContent = cfgWeightSlider ? cfgWeightSlider.value : cfgWeightToUse;
+
+        const repetitionPenaltyToUse = currentUiState.last_repetition_penalty !== undefined ? currentUiState.last_repetition_penalty : (genDefaults.repetition_penalty !== undefined ? genDefaults.repetition_penalty : 2.0);
+        if (repetitionPenaltySlider) repetitionPenaltySlider.value = repetitionPenaltyToUse;
+        if (repetitionPenaltyValueDisplay) repetitionPenaltyValueDisplay.textContent = repetitionPenaltySlider ? repetitionPenaltySlider.value : repetitionPenaltyToUse;
+
+        const topPToUse = currentUiState.last_top_p !== undefined ? currentUiState.last_top_p : (genDefaults.top_p !== undefined ? genDefaults.top_p : 1.0);
+        if (topPSlider) topPSlider.value = topPToUse;
+        if (topPValueDisplay) topPValueDisplay.textContent = topPSlider ? topPSlider.value : topPToUse;
+
+        const minPToUse = currentUiState.last_min_p !== undefined ? currentUiState.last_min_p : (genDefaults.min_p !== undefined ? genDefaults.min_p : 0.05);
+        if (minPSlider) minPSlider.value = minPToUse;
+        if (minPValueDisplay) minPValueDisplay.textContent = minPSlider ? minPSlider.value : minPToUse;
+
+        const speedFactorToUse = currentUiState.last_speed_factor !== undefined ? currentUiState.last_speed_factor : (genDefaults.speed_factor !== undefined ? genDefaults.speed_factor : 1.0);
+        if (speedFactorSlider) speedFactorSlider.value = speedFactorToUse;
+        if (speedFactorValueDisplay) speedFactorValueDisplay.textContent = speedFactorSlider ? speedFactorSlider.value : speedFactorToUse;
         if (languageSelect) {
             const savedLanguage = currentUiState.last_language || genDefaults.language || 'en';
             languageSelect.value = savedLanguage;
@@ -700,7 +732,15 @@ document.addEventListener('DOMContentLoaded', async function () {
             chunkSizeSlider.addEventListener('input', () => { if (chunkSizeValue) chunkSizeValue.textContent = chunkSizeSlider.value; });
             chunkSizeSlider.addEventListener('change', debouncedSaveState);
         }
-        const genParamSliders = [temperatureSlider, exaggerationSlider, cfgWeightSlider, speedFactorSlider];
+        const genParamSliders = [
+            temperatureSlider,
+            exaggerationSlider,
+            cfgWeightSlider,
+            repetitionPenaltySlider,
+            topPSlider,
+            minPSlider,
+            speedFactorSlider
+        ];
         genParamSliders.forEach(slider => {
             if (slider) {
                 const valueDisplayId = slider.id + '-value';
@@ -844,12 +884,18 @@ document.addEventListener('DOMContentLoaded', async function () {
         if (temperatureSlider && genParams.temperature !== undefined) temperatureSlider.value = genParams.temperature;
         if (exaggerationSlider && genParams.exaggeration !== undefined) exaggerationSlider.value = genParams.exaggeration;
         if (cfgWeightSlider && genParams.cfg_weight !== undefined) cfgWeightSlider.value = genParams.cfg_weight;
+        if (repetitionPenaltySlider && genParams.repetition_penalty !== undefined) repetitionPenaltySlider.value = genParams.repetition_penalty;
+        if (topPSlider && genParams.top_p !== undefined) topPSlider.value = genParams.top_p;
+        if (minPSlider && genParams.min_p !== undefined) minPSlider.value = genParams.min_p;
         if (speedFactorSlider && genParams.speed_factor !== undefined) speedFactorSlider.value = genParams.speed_factor;
         if (seedInput && genParams.seed !== undefined) seedInput.value = genParams.seed;
         if (languageSelect && genParams.language !== undefined) languageSelect.value = genParams.language;
         if (temperatureValueDisplay && temperatureSlider) temperatureValueDisplay.textContent = temperatureSlider.value;
         if (exaggerationValueDisplay && exaggerationSlider) exaggerationValueDisplay.textContent = exaggerationSlider.value;
         if (cfgWeightValueDisplay && cfgWeightSlider) cfgWeightValueDisplay.textContent = cfgWeightSlider.value;
+        if (repetitionPenaltyValueDisplay && repetitionPenaltySlider) repetitionPenaltyValueDisplay.textContent = repetitionPenaltySlider.value;
+        if (topPValueDisplay && topPSlider) topPValueDisplay.textContent = topPSlider.value;
+        if (minPValueDisplay && minPSlider) minPValueDisplay.textContent = minPSlider.value;
         if (speedFactorValueDisplay && speedFactorSlider) speedFactorValueDisplay.textContent = speedFactorSlider.value;
         updateSpeedFactorWarning();
 
@@ -1029,6 +1075,9 @@ document.addEventListener('DOMContentLoaded', async function () {
             temperature: parseFloat(temperatureSlider.value),
             exaggeration: parseFloat(exaggerationSlider.value),
             cfg_weight: parseFloat(cfgWeightSlider.value),
+            repetition_penalty: repetitionPenaltySlider ? parseFloat(repetitionPenaltySlider.value) : 2.0,
+            top_p: topPSlider ? parseFloat(topPSlider.value) : 1.0,
+            min_p: minPSlider ? parseFloat(minPSlider.value) : 0.05,
             speed_factor: parseFloat(speedFactorSlider.value),
             seed: parseInt(seedInput.value, 10),
             language: languageSelect.value,
@@ -1272,9 +1321,15 @@ document.addEventListener('DOMContentLoaded', async function () {
     if (saveGenDefaultsBtn && genDefaultsStatus) {
         saveGenDefaultsBtn.addEventListener('click', async () => {
             const genParams = {
-                temperature: parseFloat(temperatureSlider.value), exaggeration: parseFloat(exaggerationSlider.value),
-                cfg_weight: parseFloat(cfgWeightSlider.value), speed_factor: parseFloat(speedFactorSlider.value),
-                seed: parseInt(seedInput.value, 10) || 0, language: languageSelect.value
+                temperature: parseFloat(temperatureSlider.value),
+                exaggeration: parseFloat(exaggerationSlider.value),
+                cfg_weight: parseFloat(cfgWeightSlider.value),
+                repetition_penalty: repetitionPenaltySlider ? parseFloat(repetitionPenaltySlider.value) : 2.0,
+                top_p: topPSlider ? parseFloat(topPSlider.value) : 1.0,
+                min_p: minPSlider ? parseFloat(minPSlider.value) : 0.05,
+                speed_factor: parseFloat(speedFactorSlider.value),
+                seed: parseInt(seedInput.value, 10) || 0,
+                language: languageSelect.value
             };
             updateConfigStatus(saveGenDefaultsBtn, genDefaultsStatus, 'Saving generation defaults...', 'info', 0, false);
             try {

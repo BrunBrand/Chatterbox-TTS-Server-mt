@@ -397,6 +397,9 @@ def synthesize(
     cfg_weight: float = 0.5,
     seed: int = 0,
     language: Optional[str] = None,
+    repetition_penalty: Optional[float] = None,
+    top_p: Optional[float] = None,
+    min_p: Optional[float] = None,
 ) -> Tuple[Optional[torch.Tensor], Optional[int]]:
     """
     Synthesizes audio from text using the loaded TTS model.
@@ -409,6 +412,9 @@ def synthesize(
         cfg_weight: Classifier-Free Guidance weight.
         seed: Random seed for generation. If 0, default randomness is used.
               If non-zero, a global seed is set for reproducibility.
+        repetition_penalty: Multilingual-only setting to penalize repeated tokens.
+        top_p: Multilingual-only nucleus sampling probability mass.
+        min_p: Multilingual-only minimum token probability.
 
     Returns:
         A tuple containing the audio waveform (torch.Tensor) and the sample rate (int),
@@ -432,11 +438,20 @@ def synthesize(
 
         logger.debug(
             f"Synthesizing with params: audio_prompt='{audio_prompt_path}', temp={temperature}, "
-            f"exag={exaggeration}, cfg_weight={cfg_weight}, seed_applied_globally_if_nonzero={seed}"
+            f"exag={exaggeration}, cfg_weight={cfg_weight}, seed_applied_globally_if_nonzero={seed}, "
+            f"repetition_penalty={repetition_penalty}, top_p={top_p}, min_p={min_p}"
         )
 
         # Resolve language (used only for multilingual model)
         resolved_language = language or get_gen_default_language()
+        multilingual_kwargs = {}
+        if repetition_penalty is not None:
+            multilingual_kwargs["repetition_penalty"] = repetition_penalty
+        if top_p is not None:
+            multilingual_kwargs["top_p"] = top_p
+        if min_p is not None:
+            multilingual_kwargs["min_p"] = min_p
+
         if loaded_model_type == "multilingual":
             if not resolved_language:
                 resolved_language = get_gen_default_language()
@@ -448,6 +463,7 @@ def synthesize(
                 temperature=temperature,
                 exaggeration=exaggeration,
                 cfg_weight=cfg_weight,
+                **multilingual_kwargs,
             )
         else:
             if language and language.lower() != "en":

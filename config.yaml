@@ -22,6 +22,9 @@ generation_defaults:
   temperature: 0.8
   exaggeration: 1.3
   cfg_weight: 0.5
+  repetition_penalty: 1.8
+  top_p: 0.9
+  min_p: 0.1
   seed: 0
   speed_factor: 1.0
   language: en
@@ -31,16 +34,23 @@ audio_output:
   max_reference_duration_sec: 30
   save_to_disk: false
 ui_state:
-  last_text: "cheinsau Men n\xE3o \xE9 s\xF3 sangue e caos: \xE9 um retrato sujo de\
-    \ desejo, car\xEAncia e sobreviv\xEAncia. D\xEAnji n\xE3o quer \u201Csalvar o\
-    \ mundo\u201D; ele quer um motivo simples pra continuar vivo, e \xE9 isso que\
-    \ deixa tudo mais inc\xF4modo e humano.\n"
+  last_text: "O que aconteceu na Venezuela n\xE3o foi um ataque, foi um resgate. Por\
+    \ anos, o mundo assistiu passivamente enquanto uma quadrilha tomava conta do pa\xED\
+    s. A \xF4nu e os \"direitos humanos\" fingiram que n\xE3o viam nada, enquanto\
+    \ o povo era torturado e revirava o lixo para comer"
   last_voice_mode: clone
-  last_predefined_voice: Adrian.wav
-  last_reference_file: download.wav
+  last_predefined_voice: Ian.wav
+  last_reference_file: t7.mp3
   last_seed: 0
-  last_chunk_size: 130
-  last_split_text_enabled: false
+  last_chunk_size: 50
+  last_split_text_enabled: true
+  last_temperature: 1.5
+  last_exaggeration: 2
+  last_cfg_weight: 0.4
+  last_repetition_penalty: 2.45
+  last_top_p: 0.8
+  last_min_p: 0.17
+  last_speed_factor: 1
   hide_chunk_warning: false
   hide_generation_warning: true
   theme: dark

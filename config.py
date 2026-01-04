@@ -74,6 +74,9 @@ DEFAULT_CONFIG: Dict[str, Any] = {
         "temperature": 0.8,  # Controls randomness: lower is more deterministic.
         "exaggeration": 0.5,  # Controls expressiveness or exaggeration in speech.
         "cfg_weight": 0.5,  # Classifier-Free Guidance weight, influences adherence to prompt/style.
+        "repetition_penalty": 2.0,  # Penalizes repeated tokens (multilingual models).
+        "top_p": 1.0,  # Nucleus sampling probability mass (multilingual models).
+        "min_p": 0.05,  # Minimum token probability for sampling (multilingual models).
         "seed": 0,  # Random seed for generation. 0 often means random or engine default.
         "speed_factor": 1.0,  # Controls the speed of the generated speech.
         "language": "en",  # Default language for TTS.
@@ -88,15 +91,22 @@ DEFAULT_CONFIG: Dict[str, Any] = {
             "last_text": "",  # Last text entered by the user.
             "last_voice_mode": "predefined",  # Last selected voice mode ('predefined' or 'clone').
             "last_predefined_voice": None,  # Filename of the last used predefined voice.
-            "last_reference_file": None,  # Filename of the last used reference audio file.
-            "last_seed": 0,  # Last used generation seed.
-            "last_chunk_size": 120,  # Last used chunk size for text splitting in UI.
-            "last_split_text_enabled": True,  # Whether text splitting was last enabled in UI.
-            "hide_chunk_warning": False,  # Flag to hide the chunking warning modal.
-            "hide_generation_warning": False,  # Flag to hide the general generation quality notice modal.
-            "theme": "dark",  # Default UI theme ('dark' or 'light').
-            "last_language": "en",  # Last selected language code in the UI.
-        },
+        "last_reference_file": None,  # Filename of the last used reference audio file.
+        "last_seed": 0,  # Last used generation seed.
+        "last_chunk_size": 120,  # Last used chunk size for text splitting in UI.
+        "last_split_text_enabled": True,  # Whether text splitting was last enabled in UI.
+        "last_temperature": 0.8,  # Last used temperature slider value.
+        "last_exaggeration": 0.5,  # Last used exaggeration slider value.
+        "last_cfg_weight": 0.5,  # Last used CFG weight.
+        "last_repetition_penalty": 2.0,  # Last used repetition penalty (multilingual).
+        "last_top_p": 1.0,  # Last used top-p value (multilingual).
+        "last_min_p": 0.05,  # Last used min-p value (multilingual).
+        "last_speed_factor": 1.0,  # Last used speed factor.
+        "hide_chunk_warning": False,  # Flag to hide the chunking warning modal.
+        "hide_generation_warning": False,  # Flag to hide the general generation quality notice modal.
+        "theme": "dark",  # Default UI theme ('dark' or 'light').
+        "last_language": "en",  # Last selected language code in the UI.
+    },
     "ui": {  # General UI display settings.
         "title": "Chatterbox TTS Server",  # Title displayed in the web UI.
         "show_language_select": True,  # Whether to show language selection in the UI.
@@ -828,6 +838,30 @@ def get_gen_default_cfg_weight() -> float:
     return config_manager.get_float(
         "generation_defaults.cfg_weight",
         _get_default_from_structure("generation_defaults.cfg_weight"),
+    )
+
+
+def get_gen_default_repetition_penalty() -> float:
+    """Returns the default repetition penalty for multilingual generation."""
+    return config_manager.get_float(
+        "generation_defaults.repetition_penalty",
+        _get_default_from_structure("generation_defaults.repetition_penalty"),
+    )
+
+
+def get_gen_default_top_p() -> float:
+    """Returns the default top-p (nucleus sampling) value."""
+    return config_manager.get_float(
+        "generation_defaults.top_p",
+        _get_default_from_structure("generation_defaults.top_p"),
+    )
+
+
+def get_gen_default_min_p() -> float:
+    """Returns the default minimum p value."""
+    return config_manager.get_float(
+        "generation_defaults.min_p",
+        _get_default_from_structure("generation_defaults.min_p"),
     )
 
 

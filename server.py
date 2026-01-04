@@ -51,6 +51,9 @@ from config import (
     get_gen_default_temperature,
     get_gen_default_exaggeration,
     get_gen_default_cfg_weight,
+    get_gen_default_repetition_penalty,
+    get_gen_default_top_p,
+    get_gen_default_min_p,
     get_gen_default_seed,
     get_gen_default_speed_factor,
     get_gen_default_language,
@@ -946,6 +949,21 @@ async def custom_tts_endpoint(
                     if request.cfg_weight is not None
                     else get_gen_default_cfg_weight()
                 ),
+                repetition_penalty=(
+                    request.repetition_penalty
+                    if request.repetition_penalty is not None
+                    else get_gen_default_repetition_penalty()
+                ),
+                top_p=(
+                    request.top_p
+                    if request.top_p is not None
+                    else get_gen_default_top_p()
+                ),
+                min_p=(
+                    request.min_p
+                    if request.min_p is not None
+                    else get_gen_default_min_p()
+                ),
                 seed=(
                     request.seed if request.seed is not None else get_gen_default_seed()
                 ),
@@ -1263,6 +1281,9 @@ async def openai_speech_endpoint(request: OpenAISpeechRequest):
             temperature=get_gen_default_temperature(),
             exaggeration=get_gen_default_exaggeration(),
             cfg_weight=get_gen_default_cfg_weight(),
+            repetition_penalty=get_gen_default_repetition_penalty(),
+            top_p=get_gen_default_top_p(),
+            min_p=get_gen_default_min_p(),
             seed=seed_to_use,
             language=language_for_engine,
         )
